@@ -1,8 +1,10 @@
 <?php
 
-spl_autoload_register(function($className) {
-	$file = str_replace(array('_', '\\'), DIRECTORY_SEPARATOR, $className) . '.php';
-	if (strpos($className, 'Collection') === 0) {
-		require_once __DIR__ . '/src/' . $file;
-	}
-});
+require_once __DIR__ . '/vendor/symfony/class-loader/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+
+use Symfony\Component\ClassLoader\UniversalClassLoader;
+
+$loader = new UniversalClassLoader();
+$loader->register();
+
+$loader->registerNamespace('Collection', __DIR__ . '/src');
