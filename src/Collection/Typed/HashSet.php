@@ -1,20 +1,13 @@
-<?php
+/* Collection\Typed\HashSet */
+namespace {{ namespace }} {
+	use Collection\HashSet as BaseHashSet;
+	use Collection\Assert as Assert;
+	use Collection\Shared\Typed\BasicCollectionTrait;
 
-namespace Collection\Typed;
-
-use Collection\HashSet as BaseHashSet;
-use Collection\Assert as Assert;
-use Collection\Shared\Typed\BasicCollectionTrait;
-
-class HashSet extends BaseHashSet
-{
-	use BasicCollectionTrait;
-
-	protected $typeName;
-
-	public function __construct($typeName, $collection = null)
+	class {{ className }} extends BaseHashSet
 	{
-		parent::__construct($collection);
-		$this->typeName = $typeName;
+		use BasicCollectionTrait;
+
+		protected $typeName = '{{ typeName }}';
 	}
 }

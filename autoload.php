@@ -8,3 +8,4 @@ $loader = new UniversalClassLoader();
 $loader->register();
 
 $loader->registerNamespace('Collection', __DIR__ . '/src');
+$loader->registerNamespace('Symfony\\Component\\Console', __DIR__ . '/vendor/symfony/console');
