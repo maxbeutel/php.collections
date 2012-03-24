@@ -1,0 +1,6 @@
+{
+    "require": {
+        "symfony/console": "v2.0.12",
+        "symfony/class-loader": "v2.0.12"
+    }
+}
