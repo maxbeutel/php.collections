@@ -31,89 +31,89 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 		$this->initialize($collection);
 	}
 
-    public function rewind() 
-    {
-    	$this->current = $this->first;
-    	return true;
-    }
+	public function rewind() 
+	{
+		$this->current = $this->first;
+		return true;
+	}
 
-    public function current() 
-    {
-        return $this->current;
-    }
+	public function current() 
+	{
+		return $this->current;
+	}
 
-    public function key() 
-    {
-        return null;
-    }
+	public function key() 
+	{
+		return null;
+	}
 
-    public function next() 
-    {
+	public function next() 
+	{
 		$this->current = $this->current->next();
 		return true;
-    }
+	}
 
-    public function valid() 
-    {
- 		return $this->current !== null;
-    }
+	public function valid() 
+	{
+		return $this->current !== null;
+	}
 
-    public function addFirst($item)
-    {
-    	Assert\ArgumentType::notNull($item, 1, __METHOD__);
+	public function addFirst($item)
+	{
+		Assert\ArgumentType::notNull($item, 1, __METHOD__);
 
-    	$node = $item instanceof Node ? $item : new Node($item);
-    	$node->setNext(null);
-    	
+		$node = $item instanceof Node ? $item : new Node($item);
+		$node->setNext(null);
+		
 
-    	if ($this->count === 0) {
-    		$this->first = $this->last = $node;
-    	} else {
-    		$previousFirst = $this->first;
-    		
-    		$this->first = $node;
-    		$this->first->setNext($previousFirst);	
-    	}
+		if ($this->count === 0) {
+			$this->first = $this->last = $node;
+		} else {
+			$previousFirst = $this->first;
+			
+			$this->first = $node;
+			$this->first->setNext($previousFirst);	
+		}
 
-    	$this->count++;
+		$this->count++;
 
-    	return $this;
-    }
+		return $this;
+	}
 
-    // @TODO enforce default values for getter
-    public function first()
-    {
-    	return $this->first ? $this->first->value() : null;
-    }
+	// @TODO enforce default values for getter
+	public function first()
+	{
+		return $this->first ? $this->first->value() : null;
+	}
 
-    public function hasFirst()
-    {
-    	return $this->first instanceof Node;
-    }
+	public function hasFirst()
+	{
+		return $this->first instanceof Node;
+	}
 
-    public function tail()
-    {
-    	if (!$this->first) {
-    		return new static();
-    	}
+	public function tail()
+	{
+		if (!$this->first) {
+			return new static();
+		}
 
-    	$list = new static();
-    	$list->first = $this->first->next();
-    	$list->last = $this->last === $this->first ? $list->first : $this->last;
-    	$list->count = $this->count > 0 ? $this->count - 1 : 0;
+		$list = new static();
+		$list->first = $this->first->next();
+		$list->last = $this->last === $this->first ? $list->first : $this->last;
+		$list->count = $this->count > 0 ? $this->count - 1 : 0;
 
-    	return $list;
-    }
+		return $list;
+	}
 
-    public function last()
-    {
-    	return $this->last ? $this->last->value() : null;
-    }
+	public function last()
+	{
+		return $this->last ? $this->last->value() : null;
+	}
 
-    public function hasLast()
-    {
-    	return $this->last instanceof Node;
-    }
+	public function hasLast()
+	{
+		return $this->last instanceof Node;
+	}
 
 	protected function doCount()
 	{
