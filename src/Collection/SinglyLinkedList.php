@@ -16,7 +16,6 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 	use InitializeCollectionTrait;
 	use BasicCollectionTrait;
 
-	protected $internalCollection = array();
 	protected $count = 0;
 
 	protected $first;
@@ -80,10 +79,9 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 		return $this;
 	}
 
-	// @TODO enforce default values for getter
-	public function first()
+	public function first($defaultNodeValue = null)
 	{
-		return $this->first ? $this->first->value() : null;
+		return $this->hasFirst() ? $this->first : new Node($defaultNodeValue);
 	}
 
 	public function hasFirst()
@@ -105,14 +103,25 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 		return $list;
 	}
 
-	public function last()
+	public function last($defaultNodeValue = null)
 	{
-		return $this->last ? $this->last->value() : null;
+		return $this->hasLast() ? $this->last : new Node($defaultNodeValue);
 	}
 
 	public function hasLast()
 	{
 		return $this->last instanceof Node;
+	}
+
+	public function find($value, $defaultNodeValue = null)
+	{
+		foreach ($this as $node) {
+			if ($node->value() === $value) {
+				return $node;
+			}
+		}
+
+		return new Node($defaultNodeValue);
 	}
 
 	protected function doCount()
@@ -148,43 +157,24 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 		$previousNode = null;
 
 		foreach ($this as $node) {
-			// @TODO this branch is totally untested yet
-			if ($compareNodes) {
-				if ($node === $item) {
-					if ($previousNode) {
-						$previousNode->setNext($node->next());
+			$comparisionResult = ($compareNodes ? $node : $node->value()) === $item;
 
-						if (!$node->hasNext()) {
-							$this->last = $previousNode;
-						}						
-					} else {
-						$this->first = $node->next();
+			if ($comparisionResult) {
+				if ($previousNode) {
+					$previousNode->setNext($node->next());
 
-						if (!$node->hasNext()) {
-							$this->last = $this->first;
-						}						
-					}
+					if (!$node->hasNext()) {
+						$this->last = $previousNode;
+					}						
+				} else {
+					$this->first = $node->next();
 
-					$this->count--;					
+					if (!$node->hasNext()) {
+						$this->last = $this->first;
+					}						
 				}
-			} else {
-				if ($node->value() === $item) {
-					if ($previousNode) {
-						$previousNode->setNext($node->next());
 
-						if (!$node->hasNext()) {
-							$this->last = $previousNode;
-						}
-					} else {
-						$this->first = $node->next();
-
-						if (!$node->hasNext()) {
-							$this->last = $this->first;
-						}
-					}
-
-					$this->count--;
-				}
+				$this->count--;					
 			}
 
 			$previousNode = $node;
@@ -198,14 +188,10 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 		$compareNodes = $item instanceof Node;
 
 		foreach ($this as $node) {
-			if ($compareNodes) {
-				if ($node === $item) {
-					return true;
-				} 
-			} else {
-				if ($node->value() === $item) {
-					return true;
-				}
+			$comparisionResult = ($compareNodes ? $node : $node->value()) === $item;
+
+			if ($comparisionResult) {
+				return true;
 			}
 		}
 

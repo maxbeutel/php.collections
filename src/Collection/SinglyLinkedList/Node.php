@@ -29,6 +29,11 @@ class Node
 		return $this->next !== null;
 	}
 
+	public function hasValue()
+	{
+		return $this->value != null;
+	}
+
 	/** @internal */
 	public function setNext($next)
 	{
