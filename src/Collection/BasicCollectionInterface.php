@@ -11,4 +11,6 @@ interface BasicCollectionInterface
 	public function remove($item);
 
 	public function contains($item);
+
+	public function toArray();
 }

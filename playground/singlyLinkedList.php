@@ -2,7 +2,20 @@
 
 require_once __DIR__ . '/../autoload.php';
 
-$list = new Collection\SinglyLinkedList(array('foo', 'bar', 'baz'));
+$list = new Collection\SinglyLinkedList(['foo']);
+
+foreach ($list as $l) {
+	var_dump($l->value());
+}
+
+$list = new Collection\SinglyLinkedList(['foo', 'bar']);
+
+foreach ($list as $l) {
+	var_dump($l->value());
+}
+
+
+die();
 
 foreach ($list as $node) {
 	var_dump($node->value());
@@ -36,3 +49,12 @@ foreach ($list as $node) {
 }
 
 var_dump($list->count());
+
+
+print '##########' . PHP_EOL;
+print 'head';
+$head = $list->head();
+$tail = $list->tail();
+
+var_dump($head);
+var_dump($tail->contains('baz'));

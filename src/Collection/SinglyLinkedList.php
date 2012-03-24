@@ -11,7 +11,7 @@ use Collection\Shared\InitializeCollectionTrait;
 use Collection\Shared\BasicCollectionTrait;
 use Collection\SinglyLinkedList\Node;
 
-class SinglyLinkedList implements Iterator, Countable, ArrayAccess, BasicCollectionInterface
+class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
 {
 	use InitializeCollectionTrait;
 	use BasicCollectionTrait;
@@ -24,7 +24,7 @@ class SinglyLinkedList implements Iterator, Countable, ArrayAccess, BasicCollect
 
 	protected $current;
 
-	public function __construct($collection)
+	public function __construct($collection = null)
 	{
 		Assert\ArgumentType::isTraversableOrNull($collection, 1, __METHOD__);
 
@@ -58,42 +58,62 @@ class SinglyLinkedList implements Iterator, Countable, ArrayAccess, BasicCollect
  		return $this->current !== null;
     }
 
-	public function offsetSet($offset, $value) 
-	{
-    }
-    
-    public function offsetExists($offset) 
-    {
-    }
-    
-    public function offsetUnset($offset) 
-    {
-    }
-    
-    public function offsetGet($offset) 
-    {
-    }
-
     public function addFirst($item)
     {
     	Assert\ArgumentType::notNull($item, 1, __METHOD__);
 
-    	$previousFirst = $this->first;
-    	$node = $item instanceof Node ? $item : new Node($item, $previousFirst);
+    	$node = $item instanceof Node ? $item : new Node($item);
+    	$node->setNext(null);
+    	
 
-    	$this->first = $node;
+    	if ($this->count === 0) {
+    		$this->first = $this->last = $node;
+    	} else {
+    		$previousFirst = $this->first;
+    		
+    		$this->first = $node;
+    		$this->first->setNext($previousFirst);	
+    	}
 
     	$this->count++;
 
     	return $this;
     }
 
-    public function addAfter(Node $node, $item)
+    // @TODO enforce default values for getter
+    public function first()
     {
+    	return $this->first ? $this->first->value() : null;
     }
 
-    public function addBefore(Node $node, $item)
+    public function hasFirst()
     {
+    	return $this->first instanceof Node;
+    }
+
+    // @TODO test this
+    public function tail()
+    {
+    	if (!$this->first) {
+    		return new static();
+    	}
+
+    	$list = new static();
+    	$list->first = $this->first->next();
+    	$list->last = $this->last === $this->first ? $list->first : $this->last;
+    	$list->count = $this->count > 0 ? $this->count - 1 : 0;
+
+    	return $list;
+    }
+
+    public function last()
+    {
+    	return $this->last ? $this->last->value() : null;
+    }
+
+    public function hasLast()
+    {
+    	return $this->last instanceof Node;
     }
 
 	protected function doCount()
@@ -103,13 +123,14 @@ class SinglyLinkedList implements Iterator, Countable, ArrayAccess, BasicCollect
 
 	protected function doAdd($item)
 	{
-		$node = new Node($item, null);
+		$node = $item instanceof Node ? $item : new Node($item);
+		$node->setNext(null);
 
 		if (!$this->first && !$this->last) {
 			$this->first = $this->last = $node;
 		}
 
-		if ($this->last) {
+		if ($this->last && $this->last !== $node) {
 			$previousLast = $this->last;
 			$previousLast->setNext($node);
 
@@ -128,15 +149,40 @@ class SinglyLinkedList implements Iterator, Countable, ArrayAccess, BasicCollect
 		$previousNode = null;
 
 		foreach ($this as $node) {
+			// @TODO this branch is totally untested yet
 			if ($compareNodes) {
 				if ($node === $item) {
-					$previousNode->setNext($node->next());
+					if ($previousNode) {
+						$previousNode->setNext($node->next());
+
+						if (!$node->hasNext()) {
+							$this->last = $previousNode;
+						}						
+					} else {
+						$this->first = $node->next();
+
+						if (!$node->hasNext()) {
+							$this->last = $this->first;
+						}						
+					}
 
 					$this->count--;					
 				}
 			} else {
 				if ($node->value() === $item) {
-					$previousNode->setNext($node->next());
+					if ($previousNode) {
+						$previousNode->setNext($node->next());
+
+						if (!$node->hasNext()) {
+							$this->last = $previousNode;
+						}
+					} else {
+						$this->first = $node->next();
+
+						if (!$node->hasNext()) {
+							$this->last = $this->first;
+						}
+					}
 
 					$this->count--;
 				}
@@ -165,5 +211,16 @@ class SinglyLinkedList implements Iterator, Countable, ArrayAccess, BasicCollect
 		}
 
 		return false;
+	}
+
+	public function toArray()
+	{
+		$array = [];
+
+		foreach ($this as $node) {
+			$array[] = $node->value();
+		}
+
+		return $array;
 	}
 }
