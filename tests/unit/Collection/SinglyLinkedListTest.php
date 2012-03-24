@@ -208,4 +208,28 @@ class SinglyLinkedListTest extends PHPUnit_Framework_TestCase
 		$this->assertSame([], $list->toArray());
 		$this->assertCount(0, $list);
 	}
+
+	public function testTailFromEmptyList()
+	{
+		$list = new SinglyLinkedList();
+		
+		$tail = $list->tail();
+
+		$this->assertFalse($list->hasFirst());
+		$this->assertFalse($list->hasLast());
+		$this->assertCount(0, $list);
+		$this->assertSame([], $list->toArray());
+	}
+
+	public function testTail()
+	{
+		$list = new SinglyLinkedList([1, 2, 3]);
+		
+		$tail = $list->tail();
+
+		$this->assertSame(2, $tail->first());
+		$this->assertSame(3, $tail->last());
+		$this->assertCount(2, $tail);
+		$this->assertSame([2, 3], $tail->toArray());
+	}
 }

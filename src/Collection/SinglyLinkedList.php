@@ -91,7 +91,6 @@ class SinglyLinkedList implements Iterator, Countable, BasicCollectionInterface
     	return $this->first instanceof Node;
     }
 
-    // @TODO test this
     public function tail()
     {
     	if (!$this->first) {
